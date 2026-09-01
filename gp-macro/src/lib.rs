@@ -25,7 +25,7 @@ pub fn gp(input: TokenStream) -> TokenStream {
         },
         Err(_) => {
             return quote! {
-                compile_error!("`gp!` requires the `pari-gp` crate; add `pari-gp` as a dependency instead of `gp-core`");
+                compile_error!("`gp!` requires the `pari-gp` crate; add `pari-gp` as a dependency instead of `gp-macro`");
             }.into()
         }
     };

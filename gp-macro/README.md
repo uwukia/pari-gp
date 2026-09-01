@@ -1,4 +1,4 @@
-# gp-core
+# gp-macro
 
 This crate only contains the `gp!{}` macro. It is not meant to be added into your project.
 Refer to the `pari-gp` crate instead.

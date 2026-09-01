@@ -92,7 +92,7 @@
 //! 
 //! [PARI/GP]: (https://pari.math.u-bordeaux.fr/)
 
-pub use gp_core::gp;
+pub use gp_macro::gp;
 pub use gp_runtime::{FromGp, IntoGp, GpError, ParseError};
 
 #[doc(hidden)]

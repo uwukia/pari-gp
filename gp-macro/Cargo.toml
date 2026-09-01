@@ -1,5 +1,5 @@
 [package]
-name = "gp-core"
+name = "gp-macro"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
