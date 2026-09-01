@@ -10,8 +10,8 @@ categories = ["mathematics"]
 keywords = ["pari-gp", "proc-macro", "math", "number-theory"]
 
 [dependencies]
-gp-macro = { path = "../gp-macro", version = "0.1.0" }
-gp-runtime = { path = "../gp-runtime", version = "0.1.0" }
+gp-macro = { path = "../gp-macro", version = "0.1.1" }
+gp-runtime = { path = "../gp-runtime", version = "0.1.1" }
 
 [dev-dependencies]
 num-rational = "0.4.2"
