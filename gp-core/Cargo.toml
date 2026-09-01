@@ -1,0 +1,17 @@
+[package]
+name = "gp-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Procedural macro for the `pari-gp` crate"
+categories = ["mathematics"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro-crate = "3.5.0"
+proc-macro2 = { version = "1.0.107" }
+quote = { version = "1.0.47" }
+syn = { version = "3.0.4", default-features = false }

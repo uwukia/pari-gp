@@ -1,0 +1,19 @@
+[package]
+name = "gp-runtime"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Runtime support for the gp! macro from the `pari-gp` crate"
+categories = ["mathematics"]
+
+[dependencies]
+annotate-snippets = "0.12.16"
+nom = "8.0.0"
+num-integer = { version = "0.1.47", optional = true }
+num-rational = { version = "0.4.2", optional = true }
+num-traits = { version = "0.2.19", optional = true }
+
+[features]
+default = ["num"]
+num = ["dep:num-rational", "dep:num-integer", "dep:num-traits"]

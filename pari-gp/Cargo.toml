@@ -1,0 +1,16 @@
+[package]
+name = "pari-gp"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "A gp! macro that internally runs PARI/GP code and converts to and from GP syntax"
+categories = ["mathematics"]
+keywords = ["pari-gp", "proc-macro", "math", "number-theory"]
+
+[dependencies]
+gp-core = { path = "../gp-core", version = "0.1.0" }
+gp-runtime = { path = "../gp-runtime", version = "0.1.0" }
+
+[dev-dependencies]
+num-rational = "0.4.2"
