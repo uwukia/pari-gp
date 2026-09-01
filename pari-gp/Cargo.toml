@@ -4,6 +4,7 @@ version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
+repository.workspace = true
 description = "A gp! macro that internally runs PARI/GP code and converts to and from GP syntax"
 categories = ["mathematics"]
 keywords = ["pari-gp", "proc-macro", "math", "number-theory"]
