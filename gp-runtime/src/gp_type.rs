@@ -63,6 +63,17 @@ impl fmt::Display for ParseError<'_> {
     }
 }
 
+impl fmt::Debug for ParseError<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ParseError")
+            .field("error", &self.error.to_string())
+            .field("input", &self.input)
+            .field("name", &self.name)
+            .field("location", &self.location)
+            .finish()
+    }
+}
+
 impl<T: IntoGp + ?Sized> IntoGp for &T {
     fn into(&self) -> String {
         (*self).into()
