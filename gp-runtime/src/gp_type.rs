@@ -90,7 +90,7 @@ mod implement_rational {
 
     impl FromGp for BigInt {
         fn try_from<'s>(input: &'s str) -> Result<(Self, &'s str), ParseError<'s>> {
-            let remainder = input.trim_start_matches(|c| c == '+' || c == '-')
+            let remainder = input.trim_start_matches(['+', '-'])
                 .trim_start_matches(char::is_numeric);
 
             let input = &input[0..(input.len() - remainder.len())];
