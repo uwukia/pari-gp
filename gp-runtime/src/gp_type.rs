@@ -72,9 +72,36 @@ impl<T: IntoGp + ?Sized> IntoGp for &T {
 #[cfg(feature = "num")]
 mod implement_rational {
     use std::fmt::Display;
+    use num_bigint::BigInt;
     use num_rational::Ratio;
     use num_integer::Integer;
     use super::*;
+
+    impl FromGp for BigInt {
+        fn try_from<'s>(input: &'s str) -> Result<(Self, &'s str), ParseError<'s>> {
+            let remainder = input.trim_start_matches(|c| c == '+' || c == '-')
+                .trim_start_matches(char::is_numeric);
+
+            let input = &input[0..(input.len() - remainder.len())];
+
+            let value = input.parse::<BigInt>()
+                .map_err(
+                    |err| ParseError::without_location(err.to_string(), input, Self::name())
+                )?;
+            
+            Ok((value, remainder))
+        }
+    
+        fn name() -> &'static str {
+            "BigInt"
+        }
+    }
+
+    impl IntoGp for BigInt {
+        fn into(&self) -> String {
+            self.to_string()
+        }
+    }
 
     impl<T> FromGp for Ratio<T>
         where T: FromGp + Clone + Integer
@@ -118,7 +145,8 @@ mod implement_primitives {
         Parser, IResult, Err,
         multi::separated_list0,
         sequence::{delimited, separated_pair},
-        character::complete::{char, multispace0},
+        character::complete::{char, multispace0, none_of},
+        bytes::complete::escaped,
     };
     use super::*;
 
@@ -147,6 +175,28 @@ mod implement_primitives {
                 err
             },
             _ => unreachable!(),
+        }
+    }
+
+    impl FromGp for String {
+        fn try_from<'s>(input: &'s str) -> Result<(Self, &'s str), ParseError<'s>> {
+            delimited(
+                char('"'),
+                escaped(none_of("\\\""), '\\', char('"')),
+                char('"'),
+            ).parse(input)
+                .map(|(i, o)| (o.to_string(), i))
+                .map_err(|err| parse_err(err, Self::name()))
+        }
+        
+        fn name() -> &'static str {
+            "String"
+        }
+    }
+
+    impl IntoGp for String {
+        fn into(&self) -> String {
+            format!("\"{self}\"")
         }
     }
 
@@ -280,4 +330,47 @@ mod implement_primitives {
     }
 
     impl_primitive!{ i8 u8 i16 u16 i32 u32 i64 u64 i128 u128 usize isize }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use num_bigint::BigInt;
+    use num_rational::Ratio;
+
+    fn verify<T: FromGp + IntoGp>(s: &str) {
+        let (parsed, _) = match T::try_from(s) {
+            Ok(n) => n,
+            Err(_) => panic!("failed to parse `{s}` into {}", T::name())
+        };
+
+        let as_str = <T as IntoGp>::into(&parsed);
+
+        assert_eq!(s, as_str);
+    }
+
+    #[test]
+    fn parse_num() {
+        let s = "9253845923452346502602680120245100230505000005606";
+
+        for i in 2..s.len() {
+            let input = &s[0..i];
+            let minus = format!("-{input}");
+            let minput = &minus;
+
+            if i < 2 { verify::<u8>(input);    verify::<i8>(input);   verify::<i8>(minput);   }
+            if i < 4 { verify::<u16>(input);   verify::<i16>(input);  verify::<i16>(minput);  }
+            if i < 9 { verify::<u32>(input);   verify::<i32>(input);  verify::<i32>(minput);  }
+            if i < 18 { verify::<u64>(input);  verify::<i64>(input);  verify::<i64>(minput);  }
+            if i < 38 { verify::<u128>(input); verify::<i128>(input); verify::<i128>(minput); }
+
+            verify::<BigInt>(input); verify::<BigInt>(minput);
+            verify::<Ratio<BigInt>>(input); verify::<Ratio<BigInt>>(minput);
+        }
+    }
+
+    #[test]
+    fn parse_str() {
+        verify::<String>("\"test\"");
+    }
 }
